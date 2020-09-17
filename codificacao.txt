@@ -1,0 +1,19 @@
+---- Trabalho de Gustavo Henrique Zeni e Ianca Polizelo
+
+  
+00000 XXXXXXXX - nop
+00001 nnnnnnnn - add a, n
+00010 XXXXXrrr - add a, r
+00011 nnnnnnnn - sub a, n
+00100 XXXXXrrr - sub a, r
+
+00101 nnnnnnnn - jr n
+
+00110 nnnnnnnn - jp n
+00111 xxxxxxxx - jp a
+
+0100f nnnnnnnn - jr f n
+0101f nnnnnnnn - jp f n
+
+10rrr nnnnnnnn - ld r, n
+11rrr XXXXXggg - ld r, g

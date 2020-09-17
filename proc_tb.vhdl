@@ -10,19 +10,31 @@ end;
 architecture a_proc_tb of proc_tb is
 	component proc
 	port( 	proc_clk : in std_logic;
-			proc_wr_en : in std_logic;
+			proc_state : out unsigned(1 downto 0);
 			proc_rst : in std_logic;
-			proc_en : in std_logic
+			proc_pc: out unsigned(7 downto 0);
+			proc_rom_dado: out unsigned(12 downto 0);
+			proc_reg1: out unsigned(15 downto 0);
+			proc_reg2: out unsigned(15 downto 0);
+			proc_ula_out: out unsigned(15 downto 0)
 	);
 	end component;
-	signal proc_clk, proc_en, proc_rst, proc_wr_en: std_logic;
+	signal proc_clk, proc_rst: std_logic;
+	signal proc_state : unsigned(1 downto 0);
+	signal proc_pc : unsigned(7 downto 0);
+	signal proc_rom_dado : unsigned(12 downto 0);
+	signal proc_reg1, proc_reg2, proc_ula_out : unsigned(15 downto 0);
 
 begin
 
 uut: proc port map ( proc_clk => proc_clk,
-					proc_wr_en => proc_wr_en,
+					proc_state => proc_state,
 					proc_rst => proc_rst,
-					proc_en => proc_en);
+					proc_pc => proc_pc,
+					proc_rom_dado => proc_rom_dado,
+					proc_reg1 => proc_reg1,
+					proc_reg2 => proc_reg2,
+					proc_ula_out => proc_ula_out);
 	process
 	begin
 		proc_clk <= '0';
@@ -36,18 +48,6 @@ uut: proc port map ( proc_clk => proc_clk,
 		proc_rst <= '1';
 		wait for 100 ns;
 		proc_rst <= '0';
-		wait;
-	end process;
-	
-	process
-	begin
-		wait for 100 ns;
-		proc_en <= '1';
-		proc_wr_en <= '0';
-		wait for 100 ns;
-		proc_wr_en <= '1';
-		wait for 2500 ns;
-		proc_en <= '0';
 		wait;
 	end process;
 

@@ -4,24 +4,27 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity maq_estados_tb is
+entity maq_estados3_tb is
 end;
 
-architecture a_maq_estados_tb of maq_estados_tb is
-	component maq_estados
+architecture a_maq_estados3_tb of maq_estados3_tb is
+	component maq_estados3
 	port ( 	clk : in std_logic;
 			rst : in std_logic;
-			estado : out std_logic
+			en : in std_logic;
+			estado: out unsigned(1 downto 0)
 		
 	);
 end component;
 
-signal clk, rst, estado: std_logic;
+signal clk, rst, en: std_logic;
+signal estado: unsigned(1 downto 0);
 
 begin
 
-uut: maq_estados port map(	clk => clk,
+uut: maq_estados3 port map(	clk => clk,
 							rst => rst,
+							en => en,
 							estado => estado);
 
 	process
@@ -37,6 +40,17 @@ uut: maq_estados port map(	clk => clk,
 		rst <= '1';
 		wait for 100 ns;
 		rst <= '0';
+		wait;
+	end process;
+
+	process
+	begin
+		wait for 100 ns;
+		en <= '0';
+		wait for 200 ns;
+		en <= '1';
+		wait for 500 ns;
+		en <= '0';
 		wait;
 	end process;
 
