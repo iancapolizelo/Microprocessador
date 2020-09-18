@@ -1,19 +1,14 @@
----- Trabalho de Gustavo Henrique Zeni e Ianca Polizelo
+0100 111001110001 - nop
+1001 rrr010XXXrrr - sub (sub <ea>y, Dx)
+0101 nnn110XXXrrr - subq (#<data>, Dx)
+1101 rrr010XXXrrr - add (add <ea>y, Dx)
+0101 nnn010XXXrrr - addq (#<data>, Dx)
+0100 111011XXXrrr - jump (<ea>y)
 
-  
-00000 XXXXXXXX - nop
-00001 nnnnnnnn - add a, n
-00010 XXXXXrrr - add a, r
-00011 nnnnnnnn - sub a, n
-00100 XXXXXrrr - sub a, r
+f: 0 - Z; 1 - C
+r, g: registrador (0-7)
+n: constante
+X: ignorado
 
-00101 nnnnnnnn - jr n
-
-00110 nnnnnnnn - jp n
-00111 xxxxxxxx - jp a
-
-0100f nnnnnnnn - jr f n
-0101f nnnnnnnn - jp f n
-
-10rrr nnnnnnnn - ld r, n
-11rrr XXXXXggg - ld r, g
+Dx, Dy = Destination, Source data Register
+<ea>x, <ea>y = Effective Destination, Source address
