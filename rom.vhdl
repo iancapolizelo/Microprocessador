@@ -8,7 +8,7 @@ use ieee.numeric_std.all;
 entity rom is
 	port( 	clk	: in std_logic;
 			endereco : in unsigned(7 downto 0);
-			dado : out unsigned(12 downto 0)
+			dado : out unsigned(15 downto 0)
 		);
 end entity;
 
