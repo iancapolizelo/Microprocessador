@@ -11,7 +11,7 @@ architecture a_uc_tb of uc_tb is
 	component uc
 	port( 	uc_clk: in std_logic;
 			uc_rst : in std_logic;
-			rom_dado: in unsigned(12 downto 0);
+			rom_dado: in unsigned(15 downto 0);
 			jump_en : out std_logic;
 			cte : out unsigned(7 downto 0);
 			state : out unsigned(1 downto 0);
@@ -22,7 +22,7 @@ architecture a_uc_tb of uc_tb is
 			reg_wr_en: out std_logic
 	);
 	end component;
-	signal rom_dado : unsigned(12 downto 0);
+	signal rom_dado : unsigned(15 downto 0);
 	signal uc_clk, uc_rst, jump_en : std_logic;
 	signal state: unsigned(1 downto 0);
 	signal cte: unsigned(7 downto 0);

@@ -20,7 +20,7 @@ begin
 	process(pc_clk,pc_rst,pc_wr_en) -- acionado se houver mudança em clk, rst ou wr_en
 	begin
 		if pc_rst='1' then
-			registro <= x"00";
+			registro <= x"000";
 		elsif pc_wr_en='1' then
 			if rising_edge(pc_clk) then
 				registro <= data_in;

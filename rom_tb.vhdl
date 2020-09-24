@@ -11,13 +11,13 @@ architecture a_rom_tb of rom_tb is
 	component rom
 	port( 	clk	: in std_logic;
 			endereco : in unsigned(7 downto 0);
-			dado : out unsigned(12 downto 0)
+			dado : out unsigned(15 downto 0)
 		);
 	end component;
 
 signal clk: std_logic;
 signal endereco: unsigned(7 downto 0);
-signal dado: unsigned(12 downto 0);
+signal dado: unsigned(15 downto 0);
 
 begin
 
