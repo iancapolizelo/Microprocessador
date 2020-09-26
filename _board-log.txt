@@ -19,3 +19,4 @@ git status
 git add .
 git commit -m "mensagem"
 git push -u origin zeni-refazendo-do-zero
+teste
