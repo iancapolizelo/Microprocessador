@@ -1,0 +1,10 @@
+Lab 1 - ULA (prazo: 14/08)
+ULA.vhdl
+ULA_tb.vhdl
+
+ghdl -a ULA.vhdl
+ghdl -a ULA_tb.vhdl
+ghdl -a reg16bits.vhdl
+ghdl -a reg16bits_tb.vhdl
+ghdl -a bancoreg.vhdl
+ghdl -a bancoreg_tb.vhdl

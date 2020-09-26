@@ -1,0 +1,44 @@
+reg16bits_tb.vhdl
+linha 44
+O que devemos testar aqui?
+Código do professor:
+
+process    -- sinais dos casos de teste
+	begin
+		wait for 100 ns;
+		wr_en <= '0';
+		data_in <= "11111111";
+		wait for 100 ns;
+		wr_en <= '1';
+		data_in <= "10001101";
+	-- ...
+	
+Nosso código:
+
+process -- sinais dos casos de teste
+		begin
+			wait for 100 ns;
+			wr_en <= '0';
+			data_in <= x"00FF"; -- 0000000011111111 evitar usar
+			wait for 100 ns;
+			wr_en <= '1';
+			data_in <= x"008D"; -- 0000000010001101 evitar usar
+			wait;
+		end process;
+		
+----------------------------------------------------
+bancoreg.vhdl 
+linha 63
+O que é esse x"0000" mesmo?
+
+read_data_a <= data_out0 when read_register_a = "000"
+				else data_out1 when read_register_a = "001"
+				else data_out2 when read_register_a = "010"
+				else data_out3 when read_register_a = "011"
+				else data_out4 when read_register_a = "100"
+				else data_out5 when read_register_a = "101"
+				else data_out6 when read_register_a = "110"
+				else data_out7 when read_register_a = "111"
+				else x"0000";
+				
+----------------------------------------------------
