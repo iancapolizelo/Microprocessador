@@ -14,9 +14,3 @@ ghdl -a reg16bits.vhdl
 ghdl -a reg16bits_tb.vhdl
 ghdl -a bancoreg.vhdl
 ghdl -a bancoreg_tb.vhdl
-
-git status
-git add .
-git commit -m "mensagem"
-git push -u origin zeni-refazendo-do-zero
-teste
