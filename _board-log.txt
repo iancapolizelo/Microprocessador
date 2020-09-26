@@ -1,6 +1,12 @@
-Lab 1 - ULA (prazo: 14/08)
+Lab 2 - ULA (prazo: 14/08)
 ULA.vhdl
 ULA_tb.vhdl
+
+Lab 3 - 
+reg16bits.vhdl (ctrl c + ctrl v do professor)
+reg16bits_tb.vhdl (ctrl c + ctrl v do professor*)
+bancoreg.vhdl (feito seguindo instruções do professor)
+bancoreg_tb.vhdl (feito seguindo testbench da raissa)
 
 ghdl -a ULA.vhdl
 ghdl -a ULA_tb.vhdl
