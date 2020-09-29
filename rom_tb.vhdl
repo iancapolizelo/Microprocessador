@@ -1,4 +1,4 @@
--- Trabalho de Gustavo Henrique Zeni e Ianca Polizelo
+--Trabalho realizado por: Gustavo Henrique Zeni e Ianca Polizelo
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -9,42 +9,44 @@ end;
 
 architecture a_rom_tb of rom_tb is
 	component rom
-	port( 	clk	: in std_logic;
-			endereco : in unsigned(7 downto 0);
-			dado : out unsigned(15 downto 0)
+	port( rom_clk		:	in std_logic;
+		  rom_endereco	:	in unsigned(7 downto 0);
+		  rom_dado		:	out unsigned(15 downto 0)
 		);
 	end component;
-
-signal clk: std_logic;
-signal endereco: unsigned(7 downto 0);
-signal dado: unsigned(15 downto 0);
+	
+signal rom_clk 		: std_logic;
+signal rom_endereco : unsigned(7 downto 0);
+signal rom_dado		: unsigned(15 downto 0);
 
 begin
-
-uut: rom port map(	clk => clk,
-					endereco => endereco,
-					dado => dado);
+--pino => sinal
+uut: rom port map(rom_clk => rom_clk, 
+				  rom_endereco => rom_endereco, 
+				  rom_dado => rom_dado);
 
 	process
 	begin
-		clk <= '0';
+		rom_clk <= '0';
 		wait for 50 ns;
-		clk <= '1';
+		rom_clk <= '1';
 		wait for 50 ns;
 	end process;
-
+	
 	process
 	begin
 		wait for 100 ns;
-		endereco <= "00000010";
+		rom_endereco <= "00000001";
 		wait for 100 ns;
-		endereco <= "00000100";
+		rom_endereco <= "00000010";
 		wait for 100 ns;
-		endereco <= "00000110";
+		rom_endereco <= "00000011";
 		wait for 100 ns;
-		endereco <= "00001000";
+		rom_endereco <= "00000100";
 		wait for 100 ns;
-		endereco <= "11111110";
+		rom_endereco <= "00001000";
+		wait for 100 ns;
+		rom_endereco <= "11111110";
 		wait;
 	end process;
 	

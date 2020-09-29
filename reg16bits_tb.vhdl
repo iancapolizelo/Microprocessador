@@ -24,16 +24,15 @@ architecture a_reg16bits_tb of reg16bits_tb is
 								data_in => data_in,
 								data_out => data_out);
 		
-		process
+		process -- sinal de clock
 		begin
-		
 			clk <= '0';
 			wait for 50 ns;
 			clk <= '1';
 			wait for 50 ns;
 		end process;
 		
-		process
+		process -- sinal de reset
 		begin
 			rst <= '1';
 			wait for 100 ns;
@@ -41,14 +40,14 @@ architecture a_reg16bits_tb of reg16bits_tb is
 			wait;
 		end process;
 		
-		process
+		process -- sinais dos casos de teste
 		begin
-			wait for 100 ns;
 			wr_en <= '0';
-			data_in <= x"00FF";
+			wait for 100 ns;
+			data_in <= "1111111111111111";
 			wait for 100 ns;
 			wr_en <= '1';
-			data_in <= x"008D";
+			data_in <= "1010101010001101";
 			wait;
 		end process;
 end architecture;

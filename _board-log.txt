@@ -1,0 +1,24 @@
+Roteiro de compilação:
+
+ghdl -a ULA.vhdl
+ghdl -a ULA_tb.vhdl
+ghdl -a reg16bits.vhdl
+ghdl -a reg16bits_tb.vhdl
+ghdl -a bancoreg.vhdl
+ghdl -a bancoreg_tb.vhdl
+ghdl -a rom.vhdl
+ghdl -a rom_tb.vhdl
+ghdl -a maq_estados.vhdl
+ghdl -a maq_estados_tb.vhdl
+ghdl -a pc.vhdl
+ghdl -a pc_tb.vhdl
+ghdl -a top_level.vhdl
+ghdl -a top_level_tb.vhdl
+
+ghdl -r ULA_tb --stop-time=3000ns --wave=ULA_tb.ghw
+ghdl -r reg16bits_tb --stop-time=3000ns --wave=reg16bits_tb.ghw
+ghdl -r bancoreg_tb --stop-time=3000ns --wave=bancoreg_tb.ghw
+ghdl -r rom_tb --stop-time=3000ns --wave=rom_tb.ghw
+ghdl -r maq_estados_tb --stop-time=3000ns --wave=maq_estados_tb.ghw
+ghdl -r pc_tb --stop-time=3000ns --wave=pc_tb.ghw
+ghdl -r top_level_tb --stop-time=3000ns --wave=top_level_tb.ghw
