@@ -1,30 +1,21 @@
--- Trabalho de Gustavo Henrique Zeni e Ianca Polizelo
--- Regras:
--- Restrição para codificação: a instrução 0 deverá ser NOP (não faz nada).
--- A ULA será de 16 bits
--- O Banco de Registradores possui 8 registradores de 16 bits; usar o reg. 0 como constante é opcional
--- Os operandos das instruções não possuem 16 bits; portanto vocês não vão conseguir carregar diretamente um valor como 0xFFFF no registrador. Não tem problema.
--- Não é necessário gerar os mesmos opcodes do processador original, mas é exigido que as instruções a implementar existam nele. 
---Por exemplo: no 8051, uma soma com constante é feita com ADD A,#cte, sendo A um registrador especial (o acumulador). Pode-se somar com um registrador com
--- ADD A,Ri, sendo i de 0 a 7. Então você pode implementar uma ou ambas as instruções, mas não pode fazer ADD R3,R4, porque esta não existe.
+--Trabalho realizado por: Gustavo Henrique Zeni e Ianca Polizelo
 
-  
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity rom is
-	port( 	clk	: in std_logic;
-			endereco : in unsigned(7 downto 0);
-			dado : out unsigned(15 downto 0)
+entity rom is --mudei as variáveis aqui pra ficar melhor de entender no top
+	port( rom_clk		:	in std_logic;
+		  rom_endereco	:	in unsigned(7 downto 0);
+		  rom_dado		:	out unsigned(15 downto 0)
 		);
 end entity;
 
 architecture a_rom of rom is
-	type mem is array (0 to 255) of unsigned (15 downto 0); --fiz mem de 256 bits, calculando 2^8, que são os registradores
+	type mem is array (0 to 255) of unsigned(15 downto 0);
 	constant conteudo_rom : mem := (
-		-- Passos 1 e 2 (temos que ver se aqui antes precisa zerar R3 E R4 - acho que sim)
-		0 => "0010000101000011", -- addq 5, R3
+		--caso endereco => conteudo
+		0 => "0010000101000011",
 		1 => "0010001000000100", -- addq 8, R4
 		-- Passo 3
 		2 => "0001011010000100", -- add R3, R4 (a soma dos dois fica no R4)
@@ -33,7 +24,7 @@ architecture a_rom of rom is
 		-- Passo 4
 		5 => "0100000001000101", -- subq 1, R5
 		-- Passo 5
-		6 => "0101111011010100" -- jmp 20 (temos que rever isso aqui)
+		6 => "0101111011010100", -- jmp 20 (temos que rever isso aqui)
 		7 => "0000000000000000", -- nop
 		8 => "0000000000000000", -- nop
 		9 => "0000000000000000", -- nop
@@ -52,14 +43,15 @@ architecture a_rom of rom is
 		21 => "0001101010000011", -- add R5, R3 (faz R5+R3->R3 - como R3 tá zerado, então R3=R5)
 		-- Passo 7
 		22 => "0101111011000011", -- jmp 3 (temos que rever isso aqui)
+		--abaixo: casos omissos => (zero em todos os bits)
 		others => (others=>'0')
 		);
-
+		
+begin
+	process(rom_clk)
 	begin
-		process(clk)
-		begin
-			if(rising_edge(clk)) then
-				dado <= conteudo_rom(to_integer(endereco));
-			end if;
-		end process;
+		if(rising_edge(rom_clk)) then --quando tiver uma rampa de subida no clock
+			rom_dado <= conteudo_rom(to_integer(rom_endereco));
+		end if;
+	end process;
 end architecture;
