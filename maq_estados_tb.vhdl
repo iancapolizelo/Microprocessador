@@ -11,15 +11,15 @@ architecture a_maq_estados_tb of maq_estados_tb is
 	component maq_estados
 	port( clk	 :	in std_logic;
 		  rst	 :	in std_logic;
-		  en	 :	in std_logic;
-		  estado :	out std_logic
+		  estado :	out unsigned(1 downto 0)
 		);
 	end component;
 	
-signal clk, rst, en, estado : std_logic;
+signal clk, rst : std_logic;
+signal estado: unsigned(1 downto 0);
 
 begin
-uut: maq_estados port map( clk => clk, rst => rst, en => en, estado => estado);
+uut: maq_estados port map( clk => clk, rst => rst, estado => estado);
 
 	process
 	begin
@@ -37,15 +37,5 @@ uut: maq_estados port map( clk => clk, rst => rst, en => en, estado => estado);
 		wait;
 	end process;
 	
-	process
-	begin
-		wait for 100 ns;
-		en <= '0';
-		wait for 200 ns;
-		en <= '1';
-		wait for 500 ns;
-		en <= '0';
-		wait;
-	end process;
 	
 end architecture;

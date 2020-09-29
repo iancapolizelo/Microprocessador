@@ -24,7 +24,7 @@ architecture a_rom of rom is
 		-- Passo 4
 		5 => "0100000001000101", -- subq 1, R5
 		-- Passo 5
-		6 => "0101111011010100", -- jmp 20 (temos que rever isso aqui)
+		6 => "1111000000010100", -- jmp 20 (temos que rever isso aqui)
 		7 => "0000000000000000", -- nop
 		8 => "0000000000000000", -- nop
 		9 => "0000000000000000", -- nop
@@ -42,7 +42,7 @@ architecture a_rom of rom is
 		20 => "0011011010000011", -- sub R3, R3 (temos que zerar o R3 aqui) 
 		21 => "0001101010000011", -- add R5, R3 (faz R5+R3->R3 - como R3 tá zerado, então R3=R5)
 		-- Passo 7
-		22 => "0101111011000011", -- jmp 3 (temos que rever isso aqui)
+		22 => "1111000000000011", -- jmp 3 (temos que rever isso aqui)
 		--abaixo: casos omissos => (zero em todos os bits)
 		others => (others=>'0')
 		);
