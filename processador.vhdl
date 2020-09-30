@@ -89,7 +89,7 @@ begin --architecture
 	banco0: bancoreg port map( read_register_a => reg_a, --o read_register_a do banco está ligado no reg_a do top
 							   read_register_b => reg_b, --o read_register_b do banco está ligado no reg_b do top
 							   write_data => write_data, --aqui o write_data do banco está sendo ligado no sinal write_data
-							   write_register => reg_a, --write_register do banco no sinal write_register
+							   write_register => reg_b, --write_register do banco no sinal write_register
 							   banco_wr_en => reg_wr_en, --wr_en do banco ligado no wr_en do top geral
 							   banco_clk => proc_clk, --clk do banco no clk do top geral
 							   banco_rst => proc_rst, --rst do banco no rst do top geral
@@ -125,19 +125,19 @@ begin --architecture
 					 ula_b_sel => ula_b_sel,
 					 reg_wr_en => uc_reg_wr_en);
 					 
-	cte_16 <= resize(unsigned(cte), 16); --cte estendido
+	cte_16 <= resize(unsigned(cte), 16); --cte de 8 bits para 16
 			
-	pc_in <= pc_out + 1 when jump_en = '0' else
-			 cte when jump_en = '1' else
-			 pc_out;
+	pc_in <= pc_out + 1 when jump_en = '0' else --quando não for jump, vai para a próxima instrução
+			 cte when jump_en = '1' else --quando for jump, então vai pra instrução que está indicada nos ultimos 8 bits da instrução jump
+			 pc_out; --senão só liga mesmo
 			 
-	pc_wr_en <= '1' when state = "01" else
+	pc_wr_en <= '1' when state = "01" else --libera pra escrever no estado 1: decode/execute 
 				'0';
 				
-	reg_wr_en <= uc_reg_wr_en when state = "01" else
+	reg_wr_en <= uc_reg_wr_en when state = "01" else --libera pra escrever no registrador no estado 1
 				'0';
 				
-	--Agora temos que fazer o mux do top selecionar entre read_data_b ou cte
+	--Agora temos que fazer o mux  entre read_data_b ou cte, quando opcodes são de addq e subq
 	ula_b <= read_data_b when ula_b_sel = '0' else
 			cte_16 when ula_b_sel = '1' else
 			"0000000000000000";

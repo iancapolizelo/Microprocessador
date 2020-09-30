@@ -44,7 +44,7 @@ architecture a_reg16bits_tb of reg16bits_tb is
 		begin
 			wr_en <= '0';
 			wait for 100 ns;
-			data_in <= "1111111111111111";
+		    data_in <= "1111111111111111";
 			wait for 100 ns;
 			wr_en <= '1';
 			data_in <= "1010101010001101";

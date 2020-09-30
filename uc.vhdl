@@ -36,25 +36,27 @@ begin
 										rst    => uc_rst,
 										estado => estado);
 										
-	add <= "0001"; --0001 rrr010XXXrrr - add R1, R2 (add <ea>y, Dx - Source + Destination -> Destination)
+	add <= "0001"; --0001 rrrXXXXXXrrr - add Ra, Rb: salva no reg_b
 	
-	addq <= "0010"; --0010 nnnnnnXXXrrr - addq n, R1 (addq #<data>, Dx - Data + Destination -> Destination)
+	addq <= "0010"; --0010 nnnnnnnnXrrr - addq n, Rb: salva no reg_b
 	
-	sub <= "0011"; --0011 rrr010XXXrrr - sub R1, R2 (sub <ea>y, Dx - Source - Destination -> Destination)
+	sub <= "0011"; --0011 rrrXXXXXXrrr - sub Ra, Rb: salva no reg_b
 	
-	subq <= "0100"; --subq n, R1 (subq #<data>, Dx - Data - Destination -> Destination)
+	subq <= "0100"; --0100 nnnnnnnnXrrr - subq n, Rb: salva no reg_b
 	
-	jump <= "1111"; --1111 000000000rrr - jump (verificar)
+	jump <= "1111"; --1111 0000nnnnnnnn - jump 
 	
 	opcode <= rom_dado(15 downto 12); --bits 15, 14, 13, 12
 	
-	reg_a <= rom_dado(11 downto 9) when opcode = add or opcode = sub else "001";
+	reg_a <= rom_dado(11 downto 9) when opcode = add or opcode = sub else "000"; -- 11, 10, 9
 	
-	reg_b <= rom_dado(2 downto 0);
+	reg_b <= rom_dado(2 downto 0); -- 2, 1, 0 (menos no jump)
 	
-	jump_en <= '1' when opcode = jump else '0'; --instrução de jump
+	jump_en <= '1' when opcode = jump else '0';
 	
-	cte <= rom_dado(11 downto 4);
+	cte <= rom_dado(11 downto 4) when opcode = addq or opcode = subq else 
+		   rom_dado(7 downto 0) when opcode = jump else
+		   "00000000"; -- cte pode ser addq, subq ou jump
 	
 	ula_sel <= "00" when opcode = add or opcode = addq else
 				"01" when opcode = sub or opcode = subq else

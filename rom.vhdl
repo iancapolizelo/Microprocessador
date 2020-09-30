@@ -15,16 +15,18 @@ architecture a_rom of rom is
 	type mem is array (0 to 255) of unsigned(15 downto 0);
 	constant conteudo_rom : mem := (
 		--caso endereco => conteudo
-		0 => "0010000101000011",
-		1 => "0010001000000100", -- addq 8, R4
+		-- Passo 1
+		0 => B"0010_00000101_0_011", -- addq 5, R3
+		-- Passo 2
+		1 => B"0010_00001000_0_100", -- addq 8, R4
 		-- Passo 3
-		2 => "0001011010000100", -- add R3, R4 (a soma dos dois fica no R4)
-		3 => "0011101010000101", -- sub R5, R5 (aqui vamos zerar o R5)
-		4 => "0001100010000101", -- add R4, R5 (pra gravar o resultado do R4 no R5)
+		2 => B"0001_011_000000_100", -- add R3, R4 (a soma dos dois fica no R4)
+		3 => B"0011_101_000000_101", -- sub R5, R5 (aqui vamos zerar o R5)
+		4 => B"0001_100_000000_101", -- add R4, R5 (pra gravar o resultado do R4 no R5)
 		-- Passo 4
-		5 => "0100000001000101", -- subq 1, R5
+		5 => B"0100_00000001_0_101", -- subq 1, R5
 		-- Passo 5
-		6 => "1111000000010100", -- jmp 20 (temos que rever isso aqui)
+		6 => B"1111_0000_00010100", -- jmp 20 (temos que rever isso aqui)
 		7 => "0000000000000000", -- nop
 		8 => "0000000000000000", -- nop
 		9 => "0000000000000000", -- nop
@@ -39,10 +41,10 @@ architecture a_rom of rom is
 		18 => "0000000000000000", 
 		19 => "0000000000000000", 
 		-- Passo 6
-		20 => "0011011010000011", -- sub R3, R3 (temos que zerar o R3 aqui) 
-		21 => "0001101010000011", -- add R5, R3 (faz R5+R3->R3 - como R3 tá zerado, então R3=R5)
+		20 => B"0011_011_000000_011", -- sub R3, R3 (temos que zerar o R3 aqui) 
+		21 => B"0001_101_000000_011", -- add R5, R3 (faz R5+R3->R3 - como R3 tá zerado, então R3=R5)
 		-- Passo 7
-		22 => "1111000000000011", -- jmp 3 (temos que rever isso aqui)
+		22 => B"1111_0000_00000011", -- jmp 3 (temos que rever isso aqui)
 		--abaixo: casos omissos => (zero em todos os bits)
 		others => (others=>'0')
 		);

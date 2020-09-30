@@ -62,11 +62,51 @@ uut: uc port map ( uc_clk => uc_clk,
 	process
 	begin
 		wait for 100 ns;
-		rom_dado <= "0010000101000011";
-		wait for 300 ns;
-		rom_dado <= "0010001000000100";
-		wait for 200 ns;
-		rom_dado <= "0001011010000100";
+		rom_dado <= "0010000101000011"; --0
+		wait for 100 ns;
+		rom_dado <= "0010001000000100"; --1
+		wait for 100 ns;
+		rom_dado <= "0001011010000100"; --2
+		wait for 100 ns;
+		rom_dado <= "0011101010000101"; --3
+		wait for 100 ns;
+		rom_dado <= "0001100010000101"; --4
+		wait for 100 ns;
+		rom_dado <= "0100000001000101"; --5
+		wait for 100 ns;
+		rom_dado <= "1111000000010100";--6
+		wait for 100 ns;
+		rom_dado <= "0000000000000000";--7
+		wait for 100 ns;
+		rom_dado <= "0000000000000000";--8
+		wait for 100 ns;
+		rom_dado <= "0000000000000000";--9
+		wait for 100 ns;
+		rom_dado <= "0000000000000000";--10
+		wait for 100 ns;
+		rom_dado <= "0000000000000000";--11
+		wait for 100 ns;
+		rom_dado <= "0000000000000000";--12
+		wait for 100 ns;
+		rom_dado <= "0000000000000000";--13
+		wait for 100 ns;
+		rom_dado <= "0000000000000000";--14
+		wait for 100 ns;
+		rom_dado <= "0000000000000000";--15
+		wait for 100 ns;
+		rom_dado <= "0000000000000000";--16
+		wait for 100 ns;
+		rom_dado <= "0000000000000000";--17
+		wait for 100 ns;
+		rom_dado <= "0000000000000000";--18
+		wait for 100 ns;
+		rom_dado <= "0000000000000000";--19
+		wait for 100 ns;
+		rom_dado <= "0011011010000011";--20
+		wait for 100 ns;
+		rom_dado <= "0001101010000011";--21
+		wait for 100 ns;
+		rom_dado <= "1111000000000011";--22
 		wait;
 	end process;
 

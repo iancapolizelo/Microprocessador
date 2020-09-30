@@ -42,24 +42,53 @@ architecture a_pc_tb of pc_tb is
 		
 		process -- sinais dos casos de teste
 		begin
-			pc_wr_en <= '0';
-			wait for 100 ns;
-			data_in <= "11111111";
-			wait for 100 ns;
 			pc_wr_en <= '1';
-			data_in <= "10101010";
 			wait for 100 ns;
-			pc_wr_en <= '1';
 			data_in <= "00000000";
 			wait for 100 ns;
-			pc_wr_en <= '0';
 			data_in <= "00000001";
 			wait for 100 ns;
-			pc_wr_en <= '0';
-			data_in <= "10001001";
+			data_in <= "00000010";
 			wait for 100 ns;
-			pc_wr_en <= '1';
-			data_in <= "11111111";
+			data_in <= "00000011";
+			wait for 100 ns;
+			data_in <= "00000100";
+			wait for 100 ns;
+			data_in <= "00000101"; --5
+			wait for 100 ns;
+			data_in <= "00000110"; --6
+			wait for 100 ns;
+			data_in <= "00000111"; --7
+			wait for 100 ns;
+			data_in <= "00001000"; --8
+			wait for 100 ns;
+			data_in <= "00001001"; --9
+			wait for 100 ns;
+			data_in <= "00001010"; --10
+			wait for 100 ns;
+			data_in <= "00001011"; --11
+			wait for 100 ns;
+			data_in <= "00001100"; --12
+			wait for 100 ns;
+			data_in <= "00001101"; --13
+			wait for 100 ns;
+			data_in <= "00001110"; --14
+			wait for 100 ns;
+			data_in <= "00001111"; --15
+			wait for 100 ns;
+			data_in <= "00010000"; --16
+			wait for 100 ns;
+			data_in <= "00010001"; --17
+			wait for 100 ns;
+			data_in <= "00010010"; --18
+			wait for 100 ns;
+			data_in <= "00010011"; --19
+			wait for 100 ns;
+			data_in <= "00010100"; --20
+			wait for 100 ns;
+			data_in <= "00010101"; --21
+			wait for 100 ns;
+			data_in <= "00010110"; --22
 			wait;
 		end process;
 end architecture;
