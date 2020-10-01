@@ -44,7 +44,7 @@ architecture a_rom of rom is
 		20 => B"0011_011_000000_011", -- sub R3, R3 (temos que zerar o R3 aqui) 
 		21 => B"0001_101_000000_011", -- add R5, R3 (faz R5+R3->R3 - como R3 tá zerado, então R3=R5)
 		-- Passo 7
-		22 => B"1111_0000_00000011", -- jmp 3 (temos que rever isso aqui)
+		22 => B"1111_0000_00000001", -- jmp 3 (temos que rever isso aqui)
 		--abaixo: casos omissos => (zero em todos os bits)
 		others => (others=>'0')
 		);

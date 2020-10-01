@@ -50,7 +50,8 @@ begin
 	
 	reg_a <= rom_dado(11 downto 9) when opcode = add or opcode = sub else "000"; -- 11, 10, 9
 	
-	reg_b <= rom_dado(2 downto 0); -- 2, 1, 0 (menos no jump)
+	reg_b <= rom_dado(2 downto 0) when opcode = add or opcode = addq or opcode = sub or opcode = subq else
+				"000"; -- 2, 1, 0 (menos no jump)
 	
 	jump_en <= '1' when opcode = jump else '0';
 	

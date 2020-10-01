@@ -1,7 +1,7 @@
 0000 000000000000 - nop
-0001 rrr010XXXrrr - add R1, R2 (add <ea>y, Dx - Source + Destination -> Destination);
+0001 rrr000XXXrrr - add R1, R2 (add <ea>y, Dx - Source + Destination -> Destination);
 0010 nnnnnnnnXrrr - addq n, R1 (addq #<data>, Dx - Data + Destination -> Destination);
-0011 rrr010XXXrrr - sub R1, R2 (sub <ea>y, Dx - Source - Destination -> Destination);
+0011 rrr000XXXrrr - sub R1, R2 (sub <ea>y, Dx - Source - Destination -> Destination);
 0100 nnnnnnnnXrrr - subq n, R1 (subq #<data>, Dx - Data - Destination -> Destination);
 1111 0000nnnnnnnn - jump 
 

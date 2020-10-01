@@ -96,6 +96,10 @@ begin --architecture
 							   read_data_a => read_data_a, --read_data_a do banco ligado no sinal do top
 							   read_data_b => read_data_b); --read_data_b do banco ligado no sinal do top
 		
+	ula_b <= read_data_b when ula_b_sel = '0' else
+			cte_16 when ula_b_sel = '1' else
+			"0000000000000000";	
+		
 	--Aqui estamos criando uma ULA, que até agora é necessário apenas uma ULA para as contas
 	ula0: ULA port map( entr0 => read_data_a, --aqui estamos ligando a entrada0 da ULA no sinal read_data_a do top, que está ligado no read_data_a do banco
 											  --levando assim, read_data_a do bando com entr0 da ula0
@@ -136,11 +140,6 @@ begin --architecture
 				
 	reg_wr_en <= uc_reg_wr_en when state = "01" else --libera pra escrever no registrador no estado 1
 				'0';
-				
-	--Agora temos que fazer o mux  entre read_data_b ou cte, quando opcodes são de addq e subq
-	ula_b <= read_data_b when ula_b_sel = '0' else
-			cte_16 when ula_b_sel = '1' else
-			"0000000000000000";
 			
 	proc_state <= state;
 	
@@ -152,7 +151,6 @@ begin --architecture
 	
 	proc_reg2 <= ula_b;
 			
-	--Agora temos que ligar a saída do top na estrada do banco de dados
 	proc_ula_out <= write_data;
 	
 end architecture;
