@@ -48,15 +48,14 @@ begin
 	
 	opcode <= rom_dado(15 downto 12); --bits 15, 14, 13, 12
 	
-	reg_a <= rom_dado(11 downto 9) when opcode = add or opcode = sub else "000"; -- 11, 10, 9
+	reg_a <= rom_dado(11 downto 9); -- 11, 10, 9
 	
-	reg_b <= rom_dado(2 downto 0) when opcode = add or opcode = addq or opcode = sub or opcode = subq else
+	reg_b <= rom_dado(2 downto 0) when opcode = add or opcode = sub else
 				"000"; -- 2, 1, 0 (menos no jump)
 	
 	jump_en <= '1' when opcode = jump else '0';
 	
-	cte <= rom_dado(11 downto 4) when opcode = addq or opcode = subq else 
-		   rom_dado(7 downto 0) when opcode = jump else
+	cte <= rom_dado(7 downto 0) when opcode = jump or opcode = subq or opcode = addq else
 		   "00000000"; -- cte pode ser addq, subq ou jump
 	
 	ula_sel <= "00" when opcode = add or opcode = addq else

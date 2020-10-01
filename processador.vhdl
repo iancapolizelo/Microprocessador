@@ -89,7 +89,7 @@ begin --architecture
 	banco0: bancoreg port map( read_register_a => reg_a, --o read_register_a do banco está ligado no reg_a do top
 							   read_register_b => reg_b, --o read_register_b do banco está ligado no reg_b do top
 							   write_data => write_data, --aqui o write_data do banco está sendo ligado no sinal write_data
-							   write_register => reg_b, --write_register do banco no sinal write_register
+							   write_register => reg_a, --write_register do banco no sinal write_register
 							   banco_wr_en => reg_wr_en, --wr_en do banco ligado no wr_en do top geral
 							   banco_clk => proc_clk, --clk do banco no clk do top geral
 							   banco_rst => proc_rst, --rst do banco no rst do top geral
