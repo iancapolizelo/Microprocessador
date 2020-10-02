@@ -10,22 +10,27 @@ end;
 architecture a_ULA_tb of ULA_tb is
 
 	component ULA 	
-		port( entr0,entr1	 				 : in unsigned(15 downto 0);
-			  selec_op		 				 : in unsigned(1 downto 0);  
-			  saida							 : out unsigned(15 downto 0)
-	     );
+		port( entr0,entr1	: in unsigned(15 downto 0);
+			  selec_op		: in unsigned(1 downto 0);  
+			  saida			: out unsigned(15 downto 0);
+			  z				: out std_logic;
+			  c				: out std_logic
+			);
 	end component;
 	
 	signal entr0 : unsigned(15 downto 0);
 	signal entr1 : unsigned(15 downto 0);
 	signal selec_op : unsigned(1 downto 0);
 	signal saida : unsigned(15 downto 0);
+	signal z, c : std_logic;
 	
 	begin
 		uut: ULA port map( entr0 => entr0,
 						   entr1 => entr1,
 						   selec_op => selec_op,
-						   saida => saida);
+						   saida => saida,
+						   z => z,
+						   c => c);
 							 
 		process
 		begin									--Testes do somatório

@@ -57,38 +57,6 @@ architecture a_pc_tb of pc_tb is
 			data_in <= "00000101"; --5
 			wait for 100 ns;
 			data_in <= "00000110"; --6
-			wait for 100 ns;
-			data_in <= "00000111"; --7
-			wait for 100 ns;
-			data_in <= "00001000"; --8
-			wait for 100 ns;
-			data_in <= "00001001"; --9
-			wait for 100 ns;
-			data_in <= "00001010"; --10
-			wait for 100 ns;
-			data_in <= "00001011"; --11
-			wait for 100 ns;
-			data_in <= "00001100"; --12
-			wait for 100 ns;
-			data_in <= "00001101"; --13
-			wait for 100 ns;
-			data_in <= "00001110"; --14
-			wait for 100 ns;
-			data_in <= "00001111"; --15
-			wait for 100 ns;
-			data_in <= "00010000"; --16
-			wait for 100 ns;
-			data_in <= "00010001"; --17
-			wait for 100 ns;
-			data_in <= "00010010"; --18
-			wait for 100 ns;
-			data_in <= "00010011"; --19
-			wait for 100 ns;
-			data_in <= "00010100"; --20
-			wait for 100 ns;
-			data_in <= "00010101"; --21
-			wait for 100 ns;
-			data_in <= "00010110"; --22
 			wait;
 		end process;
 end architecture;

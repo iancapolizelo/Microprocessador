@@ -18,8 +18,12 @@ architecture a_uc_tb of uc_tb is
 		  reg_a		:	out unsigned(2 downto 0);
 		  reg_b		:	out unsigned(2 downto 0);
 		  ula_sel	:	out unsigned(1 downto 0);
+		  ula_a_sel	:	out std_logic;
 		  ula_b_sel	:	out std_logic;
-		  reg_wr_en	:	out std_logic
+		  reg_wr_en	:	out std_logic;
+		  z_in		:	in std_logic;
+		  c_in		:	in std_logic;
+		  jump_r 	:	out std_logic
 		);
 	end component;
 	
@@ -29,7 +33,8 @@ architecture a_uc_tb of uc_tb is
 	signal cte: unsigned(7 downto 0);
 	signal reg_a, reg_b : unsigned(2 downto 0);
 	signal ula_sel: unsigned(1 downto 0);
-	signal ula_b_sel, reg_wr_en: std_logic;
+	signal ula_b_sel, ula_a_sel, reg_wr_en: std_logic;
+	signal z_in, c_in, jump_r : std_logic;
 	
 begin
 uut: uc port map ( uc_clk => uc_clk,
@@ -41,8 +46,12 @@ uut: uc port map ( uc_clk => uc_clk,
 			reg_a => reg_a,
 			reg_b => reg_b,
 			ula_sel => ula_sel,
+			ula_a_sel => ula_a_sel,
 			ula_b_sel => ula_b_sel,
-			reg_wr_en => reg_wr_en);
+			reg_wr_en => reg_wr_en,
+			z_in => z_in,
+			c_in => c_in,
+			jump_r => jump_r);
 	process
 	begin
 		uc_clk <= '0';
@@ -62,51 +71,19 @@ uut: uc port map ( uc_clk => uc_clk,
 	process
 	begin
 		wait for 100 ns;
-		rom_dado <= "0010000101000011"; --0
+		rom_dado <= "0010011000000000"; --0
 		wait for 100 ns;
-		rom_dado <= "0010001000000100"; --1
+		rom_dado <= "0010100000000000"; --1
 		wait for 100 ns;
-		rom_dado <= "0001011010000100"; --2
+		rom_dado <= "0001100000000011"; --2
 		wait for 100 ns;
-		rom_dado <= "0011101010000101"; --3
+		rom_dado <= "0010011000000001"; --3
 		wait for 100 ns;
-		rom_dado <= "0001100010000101"; --4
+		rom_dado <= "0101011000011110"; --4
 		wait for 100 ns;
-		rom_dado <= "0100000001000101"; --5
+		rom_dado <= "1001000011111101"; --5
 		wait for 100 ns;
-		rom_dado <= "1111000000010100";--6
-		wait for 100 ns;
-		rom_dado <= "0000000000000000";--7
-		wait for 100 ns;
-		rom_dado <= "0000000000000000";--8
-		wait for 100 ns;
-		rom_dado <= "0000000000000000";--9
-		wait for 100 ns;
-		rom_dado <= "0000000000000000";--10
-		wait for 100 ns;
-		rom_dado <= "0000000000000000";--11
-		wait for 100 ns;
-		rom_dado <= "0000000000000000";--12
-		wait for 100 ns;
-		rom_dado <= "0000000000000000";--13
-		wait for 100 ns;
-		rom_dado <= "0000000000000000";--14
-		wait for 100 ns;
-		rom_dado <= "0000000000000000";--15
-		wait for 100 ns;
-		rom_dado <= "0000000000000000";--16
-		wait for 100 ns;
-		rom_dado <= "0000000000000000";--17
-		wait for 100 ns;
-		rom_dado <= "0000000000000000";--18
-		wait for 100 ns;
-		rom_dado <= "0000000000000000";--19
-		wait for 100 ns;
-		rom_dado <= "0011011010000011";--20
-		wait for 100 ns;
-		rom_dado <= "0001101010000011";--21
-		wait for 100 ns;
-		rom_dado <= "1111000000000011";--22
+		rom_dado <= "0001101000000100";--6
 		wait;
 	end process;
 

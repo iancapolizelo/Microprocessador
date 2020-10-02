@@ -1,39 +1,51 @@
 --Trabalho realizado por: Gustavo Henrique Zeni e Ianca Polizelo
 
---Especificação da ULA:
---	duas entradas de dados de 16 bits
---	uma saída de resultado de 16 bits
---	(opcional) uma ou mais saídas de sinalização de um bit (resultado zero, indicação de "maior" em comparação)
---	entradas para seleção de operações
---No mínimo 4 operações, incluindo:
---	soma
---	subtração
--- uma maneira de comparar dois números (pode ser operador "maior ou igual", ou então verificar o sinal de um número, ou outra maneira)
---	não implemente divisão, pois a implementação do compilador VHDL pode dar uns erros com divisão por zero (são contornáveis, mas melhor evitar)
---
--- Um testbench que cobre todas as operações tem que ser entregue; inclua nele um conjunto de testes razoável, que cobre todos os casos de interesse.
---
--- Resumindo: entram dois dados de 16 bits, escolhe-se qual das 4 operações deve ser executada pela ULA e o resultado desta operação surge na saída de 16 bits.
--- Ou seja, tem que fazer as operações e bota um mux na saída
 
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity ULA is
-	port( entr0,entr1	 					 : in unsigned(15 downto 0);  -- as duas entradas 
-		  selec_op		 					 : in unsigned(1 downto 0);   -- seleção da operação (4 operações, então 2 bits)
-																		  -- 00: soma | 01: subtração | 10: entr0 > entr1 | 11: entr0 é negativo
-		  saida								 : out unsigned(15 downto 0)  -- saida da ULA
+	port( entr0,entr1	: in unsigned(15 downto 0);
+		  selec_op		: in unsigned(1 downto 0);
+		  saida			: out unsigned(15 downto 0);
+		  z				: out std_logic; --flag de zero
+		  c				: out std_logic --flag de carry
 		  );
 end entity;
 
 architecture a_ULA of ULA is
+
+signal result : unsigned(15 downto 0);
+signal in_a_17, in_b_17, soma_17 : unsigned(16 downto 0);
+signal carry_soma : std_logic;
+signal carry_subtr : std_logic;
+
 begin	 
-	saida <=	entr0+entr1	   				 when selec_op="00" else
-				entr0-entr1	   				 when selec_op="01" else
-				"0000000000000001"  		 when selec_op="10" and entr0>entr1 else
-				"0000000000000000"  		 when selec_op="10" and entr0<=entr1 else
-				"000000000000000" & entr0(7) when selec_op="11" else
+
+	in_a_17 <= '0' & entr0;
+	in_b_17 <= '0' & entr1;
+	soma_17 <= in_a_17 + in_b_17;
+	carry_soma <= soma_17(16);
+	
+	carry_subtr <= '0' when entr1 <= entr0 else
+				   '1';
+
+	result <=	entr0+entr1	   		when selec_op = "00" else --add ou addq
+				entr0-entr1	   		when selec_op = "01" else --sub ou subq
+				entr1				when selec_op = "10" else --bypass entr1
+				"0000000000000001"  when selec_op = "11" and entr0 > entr1 else --gt: entr0 > entr1
+				"0000000000000000"  when selec_op = "11" and entr0 <= entr1 else
 				"0000000000000000";
+				
+	saida <= result;
+	
+	z <= '1' when result = "0000000000000000" else --sempre que o resultado for zero, ativa
+		 '0';
+			
+	c <= carry_soma when selec_op = "00" else --carregando a flag de carry, tanto soma quanto subtração
+		 carry_subtr when selec_op = "01" else
+		 '0';
+			
+				
 end architecture;
