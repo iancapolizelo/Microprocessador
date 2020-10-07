@@ -8,8 +8,13 @@ Codificação as instruções:
 0011 rrr000XXXrrr - sub Ra, Rb : salva no Ra (sub <ea>y, Dx - Source - Destination -> Destination);
 0100 rrrXnnnnnnnn - subq Ra, n : salva no Ra (subq #<data>, Dx - Data - Destination -> Destination);
 0101 rrrXnnnnnnnn - bcc Ra, n : compara Ra <= n : salva em Ra se é 0 ou 1
+0110 rrr000XXXrrr - move Ra, Rb : salva no Ra
+0111 rrrXnnnnnnnn - move Ra, n : salva no Ra
 100f 0000nnnnnnnn - jump relativo
 1111 0000nnnnnnnn - jump 
+
+move_r = ld_a_r/ld_r_a/ld_r_g
+move_n = ld_r_n
 
 Legenda:
 

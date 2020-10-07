@@ -12,7 +12,8 @@ entity processador is
 		  proc_rom_dado :	out unsigned(15 downto 0);
 		  proc_reg1		:	out unsigned(15 downto 0);
 		  proc_reg2		:	out unsigned(15 downto 0);
-		  proc_ula_out	:	out unsigned(15 downto 0)
+		  proc_ula_out	:	out unsigned(15 downto 0);
+		  proc_n_primos	:	out unsigned(15 downto 0)
 	);
 end entity;
 
@@ -73,7 +74,18 @@ architecture a_processador of processador is
 			  reg_wr_en	:	out std_logic;
 			  z_in		:	in std_logic;
 			  c_in		:	in std_logic;
-			  jump_r 	:	out std_logic
+			  jump_r 	:	out std_logic;
+			  ram_wr_en	:	out std_logic;
+			  acess_ram	:	out std_logic
+			);
+	end component;
+	
+	component ram
+		port(clk		:	in std_logic;
+			 endereco	:	in unsigned(7 downto 0);
+			 wr_en		:	in std_logic;
+			 dado_in	:	in unsigned(15 downto 0);
+			 dado_out	:	out unsigned(15 downto 0)
 			);
 	end component;
 	
@@ -93,6 +105,10 @@ architecture a_processador of processador is
 	signal state : unsigned(1 downto 0);
 	
 	signal z, c, jump_r : std_logic;
+	
+	signal acess_ram, ram_wr_en : std_logic;
+	signal ram_addr : unsigned(7 downto 0);
+	signal ram_in, ram_out : unsigned(15 downto 0);
 	
 begin --architecture
 
@@ -142,7 +158,15 @@ begin --architecture
 					 reg_wr_en => uc_reg_wr_en,
 					 z_in => z,
 					 c_in => c,
-					 jump_r => jump_r);
+					 jump_r => jump_r,
+					 ram_wr_en => ram_wr_en,
+					 acess_ram => acess_ram);
+					 
+	ram0 : ram port map(clk => proc_clk,
+						endereco => ram_addr,
+						wr_en => ram_wr_en,
+						dado_in => ram_in,
+						dado_out => ram_out);
 					 
 ----Aqui estão algumas operações realizados pelo processador pra tudo funcionar:					 
 					 
@@ -163,12 +187,17 @@ begin --architecture
 				'0';
 				
 	ula_b <= read_data_b when ula_b_sel = '0' else --Seleção para reg_b
-			cte_16 when ula_b_sel = '1' else
+			cte_16 when ula_b_sel = '1' and acess_ram = '0' else
+			ram_out when ula_b_sel = '1' and acess_ram = '1' else
 			"0000000000000000";
 			
 	ula_a <= read_data_a when ula_a_sel = '0' else
 			 x"00" & pc_out when ula_a_sel = '1' else
 			 x"0000";
+			 
+	ram_addr <= read_data_b(7 downto 0);
+	
+	ram_in <= read_data_a;
 			
 	proc_state <= state;
 	
@@ -181,6 +210,10 @@ begin --architecture
 	proc_reg2 <= ula_b;
 			
 	proc_ula_out <= write_data;
+	
+	proc_n_primos <= read_data_b when reg_b = "110" else
+					 read_data_a when reg_a = "110" else
+					 "0000000000000000";
 	
 end architecture;
 						

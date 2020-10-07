@@ -16,15 +16,17 @@ architecture a_processador_tb of processador_tb is
 		  proc_rom_dado :	out unsigned(15 downto 0);
 		  proc_reg1		:	out unsigned(15 downto 0);
 		  proc_reg2		:	out unsigned(15 downto 0);
-		  proc_ula_out	:	out unsigned(15 downto 0)
+		  proc_ula_out	:	out unsigned(15 downto 0);
+		  proc_n_primos :	out unsigned(15 downto 0)
 		);
 	end component;
 	
-	signal proc_clk, proc_rst: std_logic := '0';
-	signal proc_state : unsigned(1 downto 0) := "00";
-	signal proc_pc : unsigned(7 downto 0) := "00000000";
-	signal proc_rom_dado : unsigned(15 downto 0) := "0000000000000000";
-	signal proc_reg1, proc_reg2, proc_ula_out : unsigned(15 downto 0) := "0000000000000000";
+	signal proc_clk, proc_rst: std_logic;
+	signal proc_state : unsigned(1 downto 0);
+	signal proc_pc : unsigned(7 downto 0);
+	signal proc_rom_dado : unsigned(15 downto 0);
+	signal proc_reg1, proc_reg2, proc_ula_out : unsigned(15 downto 0);
+	signal proc_n_primos : unsigned(15 downto 0);
 	
 begin
 -- Pino com sinal
@@ -35,7 +37,8 @@ uut: processador port map( proc_clk => proc_clk,
 						 proc_rom_dado => proc_rom_dado,
 						 proc_reg1 => proc_reg1,
 						 proc_reg2 => proc_reg2,
-						 proc_ula_out => proc_ula_out);
+						 proc_ula_out => proc_ula_out,
+						 proc_n_primos => proc_n_primos);
 						 
 	process
 	begin --sinal do clock

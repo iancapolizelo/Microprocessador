@@ -19,7 +19,9 @@ entity uc is
 		  reg_wr_en	:	out std_logic;
 		  z_in		:	in std_logic;
 		  c_in		:	in std_logic;
-		  jump_r 	:	out std_logic
+		  jump_r 	:	out std_logic;
+		  ram_wr_en :	out std_logic;
+		  acess_ram	:	out std_logic
 		);
 end entity;
 
@@ -43,7 +45,7 @@ architecture a_uc of uc is
 	
 	signal opcode	:	unsigned(3 downto 0); --nossos opcodes são de 4 bits
 	signal estado	:	unsigned(1 downto 0);
-	signal add, addq, sub, subq, jump, bcc: unsigned (3 downto 0); --4 bits de opcode
+	signal add, addq, sub, subq, jump, bcc, move_r, move_n: unsigned (3 downto 0); --4 bits de opcode
 	signal jump_r_f : unsigned(2 downto 0); --jump relativo com flag
 	signal f, z, c	:	std_logic;
 	signal flags_wr_en	:	std_logic;
@@ -70,19 +72,23 @@ begin
 						  
 	--Aqui ficam os opcodes:
 										
-	add <= "0001"; --0001 rrrXXXXXXrrr - add Ra, Rb: salva no reg_b
+	add <= "0001"; --0001 rrr000XXXrrr - add Ra, Rb : salva no Ra
 	
-	addq <= "0010"; --0010 nnnnnnnnXrrr - addq n, Rb: salva no reg_b
+	addq <= "0010"; --0010 rrrXnnnnnnnn - addq Ra, n : salva no Ra
 	
-	sub <= "0011"; --0011 rrrXXXXXXrrr - sub Ra, Rb: salva no reg_b
+	sub <= "0011"; --0011 rrr000XXXrrr - sub Ra, Rb : salva no Ra
 	
-	subq <= "0100"; --0100 nnnnnnnnXrrr - subq n, Rb: salva no reg_b
+	subq <= "0100"; --0100 rrrXnnnnnnnn - subq Ra, n : salva no Ra
 	
-	jump <= "1111"; --1111 0000nnnnnnnn - jump
+	jump <= "1111"; --1111 0000nnnnnnnn - jump 
 	
-	jump_r_f <= "100"; --100f 0000nnnnnnnn - jump relativo com flag
+	jump_r_f <= "100"; --100f 0000nnnnnnnn - jump relativo
 
-	bcc <= "0101"; -- 0101 rrrXnnnnnnnn - bcc Ra, n : compara r < n
+	bcc <= "0101"; -- 0101 rrrXnnnnnnnn - bcc Ra, n : compara Ra
+	
+	move_r <= "0110"; -- 0110 rrr000XXXrrr - move Ra, Rb : salva no Ra
+	
+	move_n <= "0111"; -- 0111 rrrXnnnnnnnn - move Ra, n : salva no Ra
 	
 	--Aqui fica a decodificação da instrução:
 	
@@ -90,35 +96,40 @@ begin
 	
 	reg_a <= rom_dado(11 downto 9); -- 11, 10, 9
 	
-	reg_b <= rom_dado(2 downto 0) when opcode = add or opcode = sub else
+	reg_b <= rom_dado(2 downto 0) when opcode = add or opcode = sub or opcode = move_r else
 				"000"; -- 2, 1, 0 (menos no jump)
 	
 	jump_en <= '1' when opcode = jump or ((opcode(3 downto 1) = jump_r_f) and ((f = '0' and z = '1') or (f = '1' and c = '1'))) else '0';
 	
-	cte <= rom_dado(7 downto 0) when opcode = addq or opcode = subq or opcode = bcc or opcode = jump or opcode(3 downto 1) = jump_r_f; -- cte pode ser addq, subq ou jump
+	cte <= rom_dado(7 downto 0) when opcode = addq or opcode = subq or opcode = bcc or opcode = jump or opcode(3 downto 1) = jump_r_f or opcode = move_n; -- cte pode ser addq, subq ou jump
 	
-	f <= '1' when opcode(0 downto 0) = "1" else '0'; --f: 0 - Z | 1 - C
+	f <= '1' when opcode(0) = '1' else '0'; --f: 0 - Z | 1 - C
 	
 	ula_sel <= "00" when opcode = add or opcode = addq or opcode(3 downto 1) = jump_r_f else
 				"01" when opcode = sub or opcode = subq or opcode = bcc else
 				"10";
 	
 	--ula_b_sel ativa quando é add ou sub
-	ula_b_sel <= '0' when opcode = add or opcode = sub else
+	ula_b_sel <= '0' when opcode = add or opcode = sub or opcode = move_r else
 				'1';
 				
 	--ula_a_sel ativa quando é jump relativo, senão fica 0			
-	ula_a_sel <= '1' when ((opcode(3 downto 1) = jump_r_f) and ((f = '0' and z = '1') or (f = '1' and c = '1'))) else '0';
+	ula_a_sel <= '1' when ((opcode(3 downto 1) = jump_r_f) and ((f = '0' and z = '1') or (f = '1' and c = '1'))) 
+				else '0';
 				
 	flags_wr_en <= '1' when opcode = bcc or opcode = add or opcode = addq or opcode = sub or opcode = subq else
 				    '0';
 				
-	reg_wr_en <= '1' when opcode = add or opcode = addq or opcode = sub or opcode = subq else
+	reg_wr_en <= '1' when opcode = add or opcode = addq or opcode = sub or opcode = subq or opcode = move_n or opcode = move_r else
 				'0';
 		
 	--flag de jump relativo		
 	jump_r <= '1' when opcode(3 downto 0) = jump_r_f else
 			  '0';
+			  
+	ram_wr_en <= '1' when opcode = move_r else '0';
+	
+	acess_ram <= '1' when opcode = move_r else '0';
 	
 	state <= estado;
 	
