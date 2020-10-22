@@ -2,61 +2,102 @@
 
 Codificação as instruções:
 
-0000 000000000000 - nop
-0001 rrr000XXXrrr - add Ra, Rb : salva no Ra (add <ea>y, Dx - Source + Destination -> Destination);
-0010 rrrXnnnnnnnn - addq Ra, n : salva no Ra (addq #<data>, Dx - Data + Destination -> Destination);
-0011 rrr000XXXrrr - sub Ra, Rb : salva no Ra (sub <ea>y, Dx - Source - Destination -> Destination);
-0100 rrrXnnnnnnnn - subq Ra, n : salva no Ra (subq #<data>, Dx - Data - Destination -> Destination);
-0101 rrrXnnnnnnnn - bcc Ra, n : compara Ra <= n : salva em Ra se é 0 ou 1
-0110 rrr000XXXrrr - move Ra, Rb : salva no Ra
-0111 rrrXnnnnnnnn - move Ra, n : salva no Ra
-100f 0000nnnnnnnn - jump relativo
-1111 0000nnnnnnnn - jump 
-
-move_r = ld_a_r/ld_r_a/ld_r_g
-move_n = ld_r_n
+00000 00000000000 - nop
+00001 rrr000XXrrr - add Ra, Rb : salva no Ra
+00010 rrrnnnnnnnn - addq Ra, n : salva no Ra
+00011 rrr000XXrrr - sub Ra, Rb : salva no Ra
+00100 rrrnnnnnnnn - subq Ra, n : salva no Ra
+00101 rrrnnnnnnnn - bcc_n Ra, n : compara Ra <= n : salva em Ra se é 0 ou 1
+00110 rrr000XXrrr - bcc_r Ra, Rb : compara Ra <= Rb : salva em Ra se é 0 ou 1
+00111 rrr000XXrrr - move_a_r A, (Rb) : com vetor
+01000 rrr000XXrrr - move_r_a (Ra), A : com vetor
+01001 rrrnnnnnnnn - move_r_n Ra, n
+01010 rrr000XXrrr - move_r_r Ra, Rb
+01011 000nnnnnnnn - jump_e endereço
+1000f 000nnnnnnnn - jump_e_f endereço com flag
+10011 000nnnnnnnn - jump_r relativo
+1100f 000nnnnnnnn - jump_r_f relativo com flag
 
 Legenda:
 
 f: 0 - Z; 1 - C
 Z: flag zero
 C: flag carry
+A: acumulador (reg1)
 r: registrador (0-7)
 n: constante
 X: ignorado
 
-Programa a ser realizado na ROM:
+01100 nnnnnnnn - cp n => bcc_n
+01101 XXXXXrrr - cp r => bcc_r
+01110 XXXXXrrr - ld a, (r) => move_a_r
+01111 XXXXXrrr - ld (r), a => move_r_a 01111_00000100", -- zera:		ld (R4), A
+10rrr nnnnnnnn - ld r, n => move_r_n 
+11rrr XXXXXggg - ld r, g => move_r_r
 
-1. Carrega R3 (o registrador 3) com o valor 0
-2. Carrega R4 com 0
-3. Soma R3 com R4 e guarda em R4
-4. Soma 1 de R3
-5. Se R3<30 salta para a instrução do passo 3*
-6. Copia valor de R4 para R5
+00101 nnnnnnnn - jr n - jump_r
+00110 nnnnnnnn - jp n - jump_e
+00111 xxxxxxxx - jp a
+0100f nnnnnnnn - jr f n - jump_r_f
+0101f nnnnnnnn - jp f n - jump_e_f
 
-*Requisito obrigatório: o salto para trás deve ser relativo
+--Mudar UC e Processador
 
-1: addq 011, 00000000 : addq R3, 0 --0
+Programa da ROM daqui pra baixo:
 
-2: addq 100, 00000000 : addq R4, 0 --1
+move_r_n A, 0		     	01001 00100000000
 
-3: add 100, 011 : add R4, R3 --2
+fill: addq A, 1 	     	00010 00100000001
+	move_r_a (A), A	     	01000 00100000001
+	bcc_r A, 32	     	00101 00100100000
+	jump_r_f C, fill (-3)	11001 00011111101
+	move_r_n R2, 1	     	01001 01000000001
 
-4: addq 011, 00000001 : addq R3, 1 --3
+iterate: move_r_r A, R2		01010 001_00000_010
+	    addq A, 1		00010 00100000001
+	    move_r_r R2, A	01010 01000000001
+	    move_a_r A, (R2)	00111 00100000010
+	    move_r_r R3, A	01010 01100000001
+	    bcc_n A, 0		00101 00100000000
+     jump_r_f z, it_next(+23)   11000 00000010111
+	    move_r_r R4, R2	01010 10000000010
 
-5: Aqui vamos ter que fazer o seguinte:
+multp: move_r_r A, R4		01010 00100000100
+	  addq A, 1		00010 00100000001
+	  move_r_r R4, A	01010 10000000001
+	  move_a_r A, (R4)	00111 00100000100
+	  move_r_r R5, A	01010 10100000001
+	  bcc_n A, 0		00101 00100000000
+      jump_r_f Z, next_m(+12)	11000 00000001100
 
-	
-	bcc 011, 00011110 : bcc R3, 30 --4
-	jump_r 1, 11111101 : jump relativo -3 --5
+sub: move_r_r A, R5 		01010 00100000101
+	sub A, R3		00011 00100000011
+	move_r_r R5, A		01010 10100000001
+	bcc_r A, R3		00110 00100000011
+	jump_r_f Z, sub(-4)	11000 00011111100
+	jump_r_f C, menor(+2)	11001 00000000010
+	jump_r sub(-6)		10011 00011111010
 
-6: sub 101, 101 : sub R5, R5
-	add 101, 100 : add R5, R4 --6
+menor: bcc_n A, 0		00101 00100000000
+	jump_r_f Z, zera(+2)	11000 00000000010
+	jump_r next_m(+2)	10011 00000000010
 
-00000011
-11111100
-11111101
+zera: move_r_a (R4), A		01000 10000000001
 
+next_m: move_r_r A, R4		01010 00100000100
+	  bcc_n A, 32		00101 00100100000
+	jump_r_f C, multp(-20)	11001 00011101100
 
+it_next: move_r_r A, R2		01010 00100000010
+		bcc_n A, 32	00101 00100100000
+     jump_r_f C, iterate(-31)	11001 00011100001
+		move_r_n R2, 1	01001 01000000001
 
-
+show: move_r_r A, R2		01010 00100000010
+	addq A, 1		00010 00100000001
+	move_r_r R2, A		01010 01000000001
+	move_a_r A, (R2)	01000 00100000010
+	move_r_r R6, A		01010 11000000001
+	move_r_r A, R2		01010 00100000010
+	bcc_n A, 32		00101 00100100000
+   jump_r_f C, show(-7)		11001 00011111001

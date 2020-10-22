@@ -74,7 +74,7 @@ architecture a_processador of processador is
 			  reg_wr_en	:	out std_logic;
 			  z_in		:	in std_logic;
 			  c_in		:	in std_logic;
-			  jump_r 	:	out std_logic;
+			  jump_r_flag 	:	out std_logic;
 			  ram_wr_en	:	out std_logic;
 			  acess_ram	:	out std_logic
 			);
@@ -158,7 +158,7 @@ begin --architecture
 					 reg_wr_en => uc_reg_wr_en,
 					 z_in => z,
 					 c_in => c,
-					 jump_r => jump_r,
+					 jump_r_flag => jump_r,
 					 ram_wr_en => ram_wr_en,
 					 acess_ram => acess_ram);
 					 
@@ -207,7 +207,7 @@ begin --architecture
 	
 	proc_reg1 <= read_data_a;
 	
-	proc_reg2 <= ula_b;
+	proc_reg2 <= read_data_b;
 			
 	proc_ula_out <= write_data;
 	

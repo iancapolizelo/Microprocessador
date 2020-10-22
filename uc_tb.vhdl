@@ -71,19 +71,99 @@ uut: uc port map ( uc_clk => uc_clk,
 	process
 	begin
 		wait for 100 ns;
-		rom_dado <= "0010011000000000"; --0
+		rom_dado <= "0100100100000000"; --0
 		wait for 100 ns;
-		rom_dado <= "0010100000000000"; --1
+		rom_dado <= "0001000100000001"; --1
 		wait for 100 ns;
-		rom_dado <= "0001100000000011"; --2
+		rom_dado <= "0100000100000001"; --2
 		wait for 100 ns;
-		rom_dado <= "0010011000000001"; --3
+		rom_dado <= "0010100100100000"; --3
 		wait for 100 ns;
-		rom_dado <= "0101011000011110"; --4
+		rom_dado <= "1100100011111101"; --4
 		wait for 100 ns;
-		rom_dado <= "1001000011111101"; --5
+		rom_dado <= "0100101000000001"; --5
 		wait for 100 ns;
-		rom_dado <= "0001101000000100";--6
+		rom_dado <= "0101000100000010"; --6
+		wait for 100 ns;
+		rom_dado <= "0001000100000001"; --7
+		wait for 100 ns;
+		rom_dado <= "0101001000000001"; --8
+		wait for 100 ns;
+		rom_dado <= "0011100100000010"; --9
+		wait for 100 ns;
+		rom_dado <= "0101001100000001"; --10
+		wait for 100 ns;
+		rom_dado <= "0010100100000000"; --11
+		wait for 100 ns;
+		rom_dado <= "1100000000010111"; --12
+		wait for 100 ns;
+		rom_dado <= "0101010000000010"; --13
+		wait for 100 ns;
+		rom_dado <= "0101000100000100"; --14
+		wait for 100 ns;
+		rom_dado <= "0001000100000001"; --15
+		wait for 100 ns;
+		rom_dado <= "0101010000000001"; --16
+		wait for 100 ns;
+		rom_dado <= "0011100100000100"; --17
+		wait for 100 ns;
+		rom_dado <= "0101010100000001"; --18
+		wait for 100 ns;
+		rom_dado <= "0010100100000000"; --19
+		wait for 100 ns;
+		rom_dado <= "1100000000001100"; --20
+		wait for 100 ns;
+		rom_dado <= "0101000100000101"; --21
+		wait for 100 ns;
+		rom_dado <= "0001100100000011"; --22
+		wait for 100 ns;
+		rom_dado <= "0101010100000001"; --23
+		wait for 100 ns;
+		rom_dado <= "0011000100000011"; --24
+		wait for 100 ns;
+		rom_dado <= "1100000011111100"; --25
+		wait for 100 ns;
+		rom_dado <= "1100100000000010"; --26
+		wait for 100 ns;
+		rom_dado <= "1001100011111010"; --27
+		wait for 100 ns;
+		rom_dado <= "0010100100000000"; --28
+		wait for 100 ns;
+		rom_dado <= "1100000000000010"; --29
+		wait for 100 ns;
+		rom_dado <= "1001100000000010"; --30
+		wait for 100 ns;
+		rom_dado <= "0100010000000001"; --31
+		wait for 100 ns;
+		rom_dado <= "0101000100000100"; --32
+		wait for 100 ns;
+		rom_dado <= "0010100100100000"; --33
+		wait for 100 ns;
+		rom_dado <= "1100100011101100"; --34
+		wait for 100 ns;
+		rom_dado <= "0101000100000010"; --35
+		wait for 100 ns;
+		rom_dado <= "0010100100100000"; --36
+		wait for 100 ns;
+		rom_dado <= "1100100011100001"; --37
+		wait for 100 ns;
+		rom_dado <= "0100101000000001"; --38
+		wait for 100 ns;
+		rom_dado <= "0101000100000010"; --39
+		wait for 100 ns;
+		rom_dado <= "0001000100000001"; --40
+		wait for 100 ns;
+		rom_dado <= "0101001000000001"; --41
+		wait for 100 ns;
+		rom_dado <= "0100000100000010"; --42
+		wait for 100 ns;
+		rom_dado <= "0101011000000001"; --43
+		wait for 100 ns;
+		rom_dado <= "0101000100000010"; --44
+		wait for 100 ns;
+		rom_dado <= "0010100100100000"; --45
+		wait for 100 ns;
+		rom_dado <= "1100100011111001"; --46
 		wait;
 	end process;
 
