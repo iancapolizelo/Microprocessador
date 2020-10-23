@@ -212,7 +212,7 @@ begin --architecture
 	proc_ula_out <= write_data;
 	
 	proc_n_primos <= read_data_b when reg_b = "110" else
-					 read_data_b when reg_a = "110" else --ver aqui
+					 read_data_b when reg_a = "110" else
 					 "0000000000000000";
 	
 end architecture;

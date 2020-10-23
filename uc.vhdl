@@ -45,10 +45,10 @@ architecture a_uc of uc is
 	
 	signal opcode	:	unsigned(4 downto 0);
 	signal estado	:	unsigned(1 downto 0);
-	signal add, addq, sub, subq, bcc_n, bcc_r : unsigned (4 downto 0);
+	signal add, addq, sub, subq, cmpi, cmpa : unsigned (4 downto 0);
 	signal move_a_r, move_r_a, move_r_n, move_r_r : unsigned (4 downto 0);
-	signal jp_a, jp_r : unsigned (4 downto 0);
-	signal jp_a_f, jp_r_f : unsigned (3 downto 0);
+	signal jmp, bra : unsigned (4 downto 0);
+	signal bc : unsigned (3 downto 0);
 	signal f, z, c	:	std_logic;
 	signal flags_wr_en	:	std_logic;
 	
@@ -76,43 +76,41 @@ begin
 						  
 	--Aqui ficam os opcodes:
 										
-	add <= "00001"; -- add a, R
+	add <= "00001"; -- add A, R -> 00001 00000000rrr
 	
-	addq <= "00010"; --addq a, n
+	addq <= "00010"; -- addq A, n -> 00010 000nnnnnnnn
 	
-	sub <= "00011"; --sub a, R
+	sub <= "00011"; -- sub A, R -> 00011 00000000rrr
 	
-	subq <= "00100"; --subq a, n
+	subq <= "00100"; -- subq A, n -> 00100 000nnnnnnnn
 
-	bcc_n <= "00101"; -- bcc_n a, n
+	cmpi <= "00101"; -- cmpi A, n -> 00101 000nnnnnnnn
 	
-	bcc_r <= "00110"; -- bcc_r a, R
+	cmpa <= "00110"; -- cmpa A, R -> 00110 00000000rrr
 	
-	move_a_r <= "00111"; -- move_a_r A, (R)
+	move_a_r <= "00111"; -- move_a_r A, (R) -> 00111 00000000rrr
 	
-	move_r_a <= "01000"; -- move_r_a (R), A
+	move_r_a <= "01000"; -- move_r_a (R), A -> 01000 00000000rrr
 	
-	move_r_n <= "01001"; -- move_r_n a, n
+	move_r_n <= "01001"; -- move_r_n a, n -> 01001 rrrnnnnnnnn
 	
-	move_r_r <= "01010"; -- move_r_r a, R
+	move_r_r <= "01010"; -- move_r_r a, R -> 01010 rrr00000ggg
 	
-	jp_a <= "01011"; -- jp_a address
+	jmp <= "01011"; -- jmp n -> 01011 000nnnnnnnn
 	
-	jp_a_f <= "1000"; -- jp_a_f address com flag
+	bra <= "10011"; -- bra n -> 10011 000nnnnnnnn
 	
-	jp_r <= "10011"; -- jump_r relativo
-	
-	jp_r_f <= "1100"; -- jump_r_f relativo com flag
+	bc <= "1100"; -- bcf n (f = C -> BCS/f = Z -> BEQ) -> 1100f 000nnnnnnnn
 	
 	--Aqui fica a decodificação da instrução:
 	
 	reg_a <= rom_dado(10 downto 8) when opcode = move_r_n or opcode = move_r_r else
-			"001"; -- a/r
+			"001"; -- A/r
 	
 	reg_b <= rom_dado(2 downto 0); -- r/g
 	
-	jump_en <= '1' when opcode = jp_a or opcode = jp_r or 
-				((opcode(4 downto 1) = jp_r_f or opcode(4 downto 1) = jp_a_f) and ((f = '0' and z = '1') or (f = '1' and c = '1'))) else 
+	jump_en <= '1' when opcode = jmp or opcode = bra or 
+				((opcode(4 downto 1) = bc) and ((f = '0' and z = '1') or (f = '1' and c = '1'))) else 
 				'0';
 	
 	cte <= rom_dado(7 downto 0); -- n
@@ -120,25 +118,25 @@ begin
 	f <= '1' when opcode(0) = '1' else '0'; --f: 0 - Z | 1 - C
 
 	
-	ula_sel <= "00" when opcode = add or opcode = addq or opcode= jp_r or opcode(4 downto 1) = jp_r_f else
-				"01" when opcode = sub or opcode = subq or opcode = bcc_n or opcode = bcc_r else
+	ula_sel <= "00" when opcode = add or opcode = addq or opcode= bra or opcode(4 downto 1) = bc else
+				"01" when opcode = sub or opcode = subq or opcode = cmpi or opcode = cmpa else
 				"10";
 	
-	ula_b_sel <= '0' when opcode = add or opcode = sub or opcode = bcc_r or opcode = move_r_r else
+	ula_b_sel <= '0' when opcode = add or opcode = sub or opcode = cmpa or opcode = move_r_r else
 				'1';
 				
 	
-	ula_a_sel <= '1' when opcode = jp_r or ((opcode(4 downto 1) = jp_r_f) and ((f = '0' and z = '1') or (f = '1' and c = '1'))) 
+	ula_a_sel <= '1' when opcode = bra or ((opcode(4 downto 1) = bc) and ((f = '0' and z = '1') or (f = '1' and c = '1'))) 
 				else '0';
 				
-	flags_wr_en <= '1' when opcode = bcc_n or opcode = bcc_r or opcode = add or opcode = addq or opcode = sub or opcode = subq else
+	flags_wr_en <= '1' when opcode = cmpi or opcode = cmpa or opcode = add or opcode = addq or opcode = sub or opcode = subq else
 				    '0';
 				
 	reg_wr_en <= '1' when opcode = add or opcode = addq or opcode = sub or opcode = subq or opcode = move_r_n or opcode = move_r_r or opcode = move_a_r else
 				'0';
 		
 	--flag de jump relativo		
-	jump_r <= '1' when opcode(4 downto 1) = jp_r_f or opcode = jp_r else
+	jump_r <= '1' when opcode(4 downto 1) = bc or opcode = bra else
 			  '0';
 			  
 	ram_wr_en <= '1' when opcode = move_r_a else '0';

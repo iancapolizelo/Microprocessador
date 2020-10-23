@@ -2,34 +2,24 @@
 
 Codificação as instruções:
 
-opcode = 15 ao 11
-opcode j_r_f e j_a_f = 15 ao 12
-
-reg_a = acumulador / move_r_r(10 ao 8) / move_r_n(10 ao 8)
-reg_b = 2 ao 0
-cte = 7 ao 0
-
-f = opcode(11)
-
 00000 00000000000 - nop
-00001 00000000rrr - add a, R = add a, r
-00010 000nnnnnnnn - addq a, n = add a, n
-00011 00000000rrr - sub a, R = sub a, r
-00100 000nnnnnnnn - subq a, n = sub a, n
-00101 000nnnnnnnn - bcc_n a, n = cp n
-00110 00000000rrr - bcc_r a, R = cp r
-00111 00000000rrr - move_a_r A, (R) = ld a, (r)
-01000 00000000rrr - move_r_a (R), A = ld (r), a
-01001 rrrnnnnnnnn - move_r_n a, n = ld r, n
-01010 rrr00000ggg - move_r_r a, R = ld r, g
-01011 000nnnnnnnn - jp_a n = jp n 
-1000f 000nnnnnnnn - jp_a_f = jp f n
-10011 000nnnnnnnn - jp_r n = jr n
-1100f 000nnnnnnnn - jp_r_f f, n = jr f n
+00001 00000000rrr - add A, R
+00010 000nnnnnnnn - addq A, n
+00011 00000000rrr - sub A, R
+00100 000nnnnnnnn - subq A, n
+00101 000nnnnnnnn - cmpi A, n
+00110 00000000rrr - cmpa A, R
+00111 00000000rrr - move_a_r A, (R)
+01000 00000000rrr - move_r_a (R), A
+01001 rrrnnnnnnnn - move_r_n A, n
+01010 rrr00000ggg - move_r_r A, R
+01011 000nnnnnnnn - jmp n
+10011 000nnnnnnnn - bra n
+1100f 000nnnnnnnn - bcf n (f = C -> BCS/f = Z -> BEQ)
 
 Legenda:
 
-f: 0 - Z; 1 - C
+f = flag: 0 - Z; 1 - C
 Z: flag zero
 C: flag carry
 A: acumulador (reg1)
@@ -37,15 +27,14 @@ r, g: registrador (0-7)
 n: constante
 X: ignorado
 
---Mudar UC e Processador
-
 Programa da ROM daqui pra baixo:
 
 move_r_n A, 0	 	=>	01001 001 00000000
+
 fill: addq A, 1  	=>	00010 000 00000001
 	move_r_a (a),a  =>	01000 00000000 001
-	bcc_n A, 32	=>	00101 000 00100000
-	jp_r_f C, fill(-3)=>	11001 000 11111101 
+	cmpi A, 32	=>	00101 000 00100000
+	bcs fill(-3)	=>	11001 000 11111101 
 	move_r_n R2, 1	=>	01001 010 00000001
 
 iterate: move_r_r A, R2 =>	01010 001 00000 010
@@ -53,38 +42,39 @@ iterate: move_r_r A, R2 =>	01010 001 00000 010
 	move_r_r R2, A  =>	01010 010 00000 001
 	move_a_r A, (R2)=>	00111 00000000 010
 	move_r_r R3, A	=>	01010 011 00000 001
-	bcc_n A, 0	=>	00101 00 000000000
-	jp_r_f Z, it_next(+23)=>11000 000 00010111
+	cmpi A, 0	=>	00101 00 000000000
+	beq it_next(+23)=>11000 000 00010111
 	move_r_r R4, R2	=>	01010 100 00000 010
+
 multp: move_r_r A, R4	=>	01010 001 00000 100
 	addq A, 1	=>	00010 000 00000001
 	move_r_r R4, A	=>	01010 100 00000 001
 	move_a_r A, (R4)=>	00111 00000000 100
 	move_r_r R5, A	=>	01010 101 00000 001
-	bcc_n A, 0	=>	00101 000 00000000
-	jp_r_f Z, next_m(+12)=> 11000 000 00001100
+	cmpi A, 0	=>	00101 000 00000000
+	beq next_m(+12)	=> 11000 000 00001100
 
 sub: move_r_r A, R5	=>	01010 001 00000 101
 	sub A, R3	=>	00011 00000000 011
 	move_r_r R5, A	=>	01010 101 00000 001
-	bcc_r A, R3	=>	00110 00000000 011
-	jp_r_f Z, sub(-4)=>	11000 000 11111100
-	jp_r_f C, menor(+2)=>	11001 000 00000010
-	jp_r sub(-6)	=>	10011 000 11111010
+	cmpa A, R3	=>	00110 00000000 011
+	beq sub(-4)	=>	11000 000 11111100
+	bcs menor(+2)	=>	11001 000 00000010
+	bra sub(-6)	=>	10011 000 11111010
 
-menor: bcc_n A, 0	=>	00101 000 00000000
-	jp_r_f Z, zera(+2)=>	11000 000 00000010
-	jp_r next_m(+2)	=>	10011 000 00000010
+menor: cmpi A, 0	=>	00101 000 00000000
+	beq zera(+2)	=>	11000 000 00000010
+	bra next_m(+2)	=>	10011 000 00000010
 	
 zera: move_r_a (R4), A	=>	01000 00000000 100
 
 next_m: move_r_r A, R4	=>	01010 001 00000 100
-	bcc_n A, 32	=>	00101 000 00100000
-	jp_r_f C, multp(-20)=>	11001 000 11101100
+	cmpi A, 32	=>	00101 000 00100000
+	bcs multp(-20)	=>	11001 000 11101100
 
 it_next: move_r_r A, R2	=>	01010 001 00000 010
-	bcc_n A, 32	=>	00101 000 00100000
-	jp_r_f C, iterate(-31)=>11001 000 11100001
+	cmpi A, 32	=>	00101 000 00100000
+	bcs iterate(-31)=>	11001 000 11100001
 	move_r_n R2, 1	=>	01001 010 00000001
 
 show: move_r_r A, R2	=>	01010 001 00000 010
@@ -93,5 +83,5 @@ show: move_r_r A, R2	=>	01010 001 00000 010
 	move_a_r A, (R2)=>	00111 00000000	010
 	move_r_r R6, A	=>	01010 110 00000 001
 	move_r_r A, R2	=>	01010 001 00000 010
-	bcc_n A, 32	=>	00101 000 00100000
-	jp_r_f C, show(-7)=>	11001 000 11111001
+	cmpi A, 32	=>	00101 000 00100000
+	bcs show(-7)	=>	11001 000 11111001
