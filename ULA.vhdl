@@ -6,7 +6,8 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity ULA is
-	port( entr0,entr1	: in unsigned(15 downto 0);
+	port( entr0			: in unsigned(15 downto 0); -- reg_a
+		  entr1			: in unsigned(15 downto 0); -- reg_b
 		  selec_op		: in unsigned(1 downto 0);
 		  saida			: out unsigned(15 downto 0);
 		  z				: out std_logic; --flag de zero
@@ -19,17 +20,13 @@ architecture a_ULA of ULA is
 signal result : unsigned(15 downto 0);
 signal in_a_17, in_b_17, soma_17 : unsigned(16 downto 0);
 signal carry_soma : std_logic;
-signal carry_subtr : std_logic;
 
 begin	 
 
-	in_a_17 <= '0' & entr0;
-	in_b_17 <= '0' & entr1;
+	in_a_17 <= '0' & entr0; --passamos reg_a para 17 bits
+	in_b_17 <= '0' & entr1; --passamos reg_b para 17 bits
 	soma_17 <= in_a_17 + in_b_17;
-	carry_soma <= soma_17(16);
-	
-	carry_subtr <= '0' when entr1 <= entr0 else
-				   '1';
+	carry_soma <= soma_17(16); --o carry é o MSB da soma de 17 bits
 
 	result <=	entr0+entr1	   		when selec_op = "00" else --add ou addq
 				entr0-entr1	   		when selec_op = "01" else --sub ou subq
@@ -44,8 +41,8 @@ begin
 		 '0';
 			
 	c <= carry_soma when selec_op = "00" else --carregando a flag de carry, tanto soma quanto subtração
-		 carry_subtr when selec_op = "01" else
-		 '0';
+		 '0' when entr1 <= entr0 else
+		 '1';
 			
 				
 end architecture;

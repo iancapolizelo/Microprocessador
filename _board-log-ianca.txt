@@ -32,7 +32,7 @@ ghdl -r pc_tb --stop-time=3000ns --wave=pc_tb.ghw
 ghdl -r uc_tb --stop-time=3000ns --wave=uc_tb.ghw
 ghdl -r maq_estados3_tb --stop-time=3000ns --wave=maq_estados3_tb.ghw
 ghdl -r ram_tb --stop-time=3000ns --wave=ram_tb.ghw
-ghdl -r processador_tb --stop-time=40000ns --wave=processador_tb.ghw
+ghdl -r processador_tb --stop-time=4000000ns --wave=processador_tb.ghw
 
 
 Comandos Git:

@@ -6,8 +6,8 @@ use ieee.numeric_std.all;
 
 entity processador is
 	port( proc_clk		:	in std_logic;
-		  proc_rst		:	in std_logic;
 		  proc_state 	:	out unsigned(1 downto 0);
+		  proc_rst		:	in std_logic;
 		  proc_pc		:	out unsigned(7 downto 0);
 		  proc_rom_dado :	out unsigned(15 downto 0);
 		  proc_reg1		:	out unsigned(15 downto 0);
@@ -74,7 +74,7 @@ architecture a_processador of processador is
 			  reg_wr_en	:	out std_logic;
 			  z_in		:	in std_logic;
 			  c_in		:	in std_logic;
-			  jump_r_flag 	:	out std_logic;
+			  jump_r 	:	out std_logic;
 			  ram_wr_en	:	out std_logic;
 			  acess_ram	:	out std_logic
 			);
@@ -117,7 +117,7 @@ begin --architecture
 	banco0: bancoreg port map( read_register_a => reg_a,
 							   read_register_b => reg_b,
 							   write_data => write_data,
-							   write_register => reg_a, --Os dados sempre serão escritos no reg_a
+							   write_register => reg_a,
 							   banco_wr_en => reg_wr_en,
 							   banco_clk => proc_clk,
 							   banco_rst => proc_rst,
@@ -135,8 +135,8 @@ begin --architecture
 						c => c);
 	
 	pc0: pc port map(pc_clk => proc_clk,
-					 pc_rst => proc_rst,
 					 pc_wr_en => pc_wr_en,
+					 pc_rst => proc_rst,
 					 data_in => pc_in, 
 					 data_out => pc_out);
 					 
@@ -158,7 +158,7 @@ begin --architecture
 					 reg_wr_en => uc_reg_wr_en,
 					 z_in => z,
 					 c_in => c,
-					 jump_r_flag => jump_r,
+					 jump_r => jump_r,
 					 ram_wr_en => ram_wr_en,
 					 acess_ram => acess_ram);
 					 
@@ -212,7 +212,7 @@ begin --architecture
 	proc_ula_out <= write_data;
 	
 	proc_n_primos <= read_data_b when reg_b = "110" else
-					 read_data_a when reg_a = "110" else
+					 read_data_b when reg_a = "110" else --ver aqui
 					 "0000000000000000";
 	
 end architecture;

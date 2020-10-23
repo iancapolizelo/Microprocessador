@@ -10,14 +10,14 @@ end;
 architecture a_processador_tb of processador_tb is
 	component processador
 	port( proc_clk		:	in std_logic;
-		  proc_rst		:	in std_logic;
 		  proc_state 	:	out unsigned(1 downto 0);
+		  proc_rst		:	in std_logic;
 		  proc_pc		:	out unsigned(7 downto 0);
 		  proc_rom_dado :	out unsigned(15 downto 0);
 		  proc_reg1		:	out unsigned(15 downto 0);
 		  proc_reg2		:	out unsigned(15 downto 0);
 		  proc_ula_out	:	out unsigned(15 downto 0);
-		  proc_n_primos :	out unsigned(15 downto 0)
+		  proc_n_primos	:	out unsigned(15 downto 0)
 		);
 	end component;
 	

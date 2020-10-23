@@ -137,6 +137,6 @@ architecture a_pc_tb of pc_tb is
 			data_in <= "00101101"; --45
 			wait for 100 ns;
 			data_in <= "00101110"; --46
-				wait;
+			wait;
 		end process;
 end architecture;

@@ -2,21 +2,30 @@
 
 Codificação as instruções:
 
+opcode = 15 ao 11
+opcode j_r_f e j_a_f = 15 ao 12
+
+reg_a = acumulador / move_r_r(10 ao 8) / move_r_n(10 ao 8)
+reg_b = 2 ao 0
+cte = 7 ao 0
+
+f = opcode(11)
+
 00000 00000000000 - nop
-00001 rrr000XXrrr - add Ra, Rb : salva no Ra
-00010 rrrnnnnnnnn - addq Ra, n : salva no Ra
-00011 rrr000XXrrr - sub Ra, Rb : salva no Ra
-00100 rrrnnnnnnnn - subq Ra, n : salva no Ra
-00101 rrrnnnnnnnn - bcc_n Ra, n : compara Ra <= n : salva em Ra se é 0 ou 1
-00110 rrr000XXrrr - bcc_r Ra, Rb : compara Ra <= Rb : salva em Ra se é 0 ou 1
-00111 rrr000XXrrr - move_a_r A, (Rb) : com vetor
-01000 rrr000XXrrr - move_r_a (Ra), A : com vetor
-01001 rrrnnnnnnnn - move_r_n Ra, n
-01010 rrr000XXrrr - move_r_r Ra, Rb
-01011 000nnnnnnnn - jump_e endereço
-1000f 000nnnnnnnn - jump_e_f endereço com flag
-10011 000nnnnnnnn - jump_r relativo
-1100f 000nnnnnnnn - jump_r_f relativo com flag
+00001 00000000rrr - add a, R = add a, r
+00010 000nnnnnnnn - addq a, n = add a, n
+00011 00000000rrr - sub a, R = sub a, r
+00100 000nnnnnnnn - subq a, n = sub a, n
+00101 000nnnnnnnn - bcc_n a, n = cp n
+00110 00000000rrr - bcc_r a, R = cp r
+00111 00000000rrr - move_a_r A, (R) = ld a, (r)
+01000 00000000rrr - move_r_a (R), A = ld (r), a
+01001 rrrnnnnnnnn - move_r_n a, n = ld r, n
+01010 rrr00000ggg - move_r_r a, R = ld r, g
+01011 000nnnnnnnn - jp_a n = jp n 
+1000f 000nnnnnnnn - jp_a_f = jp f n
+10011 000nnnnnnnn - jp_r n = jr n
+1100f 000nnnnnnnn - jp_r_f f, n = jr f n
 
 Legenda:
 
@@ -24,80 +33,65 @@ f: 0 - Z; 1 - C
 Z: flag zero
 C: flag carry
 A: acumulador (reg1)
-r: registrador (0-7)
+r, g: registrador (0-7)
 n: constante
 X: ignorado
-
-01100 nnnnnnnn - cp n => bcc_n
-01101 XXXXXrrr - cp r => bcc_r
-01110 XXXXXrrr - ld a, (r) => move_a_r
-01111 XXXXXrrr - ld (r), a => move_r_a 01111_00000100", -- zera:		ld (R4), A
-10rrr nnnnnnnn - ld r, n => move_r_n 
-11rrr XXXXXggg - ld r, g => move_r_r
-
-00101 nnnnnnnn - jr n - jump_r
-00110 nnnnnnnn - jp n - jump_e
-00111 xxxxxxxx - jp a
-0100f nnnnnnnn - jr f n - jump_r_f
-0101f nnnnnnnn - jp f n - jump_e_f
 
 --Mudar UC e Processador
 
 Programa da ROM daqui pra baixo:
 
-move_r_n A, 0		     	01001 00100000000
+move_r_n A, 0	 	=>	01001 001 00000000
+fill: addq A, 1  	=>	00010 000 00000001
+	move_r_a (a),a  =>	01000 00000000 001
+	bcc_n A, 32	=>	00101 000 00100000
+	jp_r_f C, fill(-3)=>	11001 000 11111101 
+	move_r_n R2, 1	=>	01001 010 00000001
 
-fill: addq A, 1 	     	00010 00100000001
-	move_r_a (A), A	     	01000 00100000001
-	bcc_r A, 32	     	00101 00100100000
-	jump_r_f C, fill (-3)	11001 00011111101
-	move_r_n R2, 1	     	01001 01000000001
+iterate: move_r_r A, R2 =>	01010 001 00000 010
+	addq A, 1	=>	00010 000 00000001
+	move_r_r R2, A  =>	01010 010 00000 001
+	move_a_r A, (R2)=>	00111 00000000 010
+	move_r_r R3, A	=>	01010 011 00000 001
+	bcc_n A, 0	=>	00101 00 000000000
+	jp_r_f Z, it_next(+23)=>11000 000 00010111
+	move_r_r R4, R2	=>	01010 100 00000 010
+multp: move_r_r A, R4	=>	01010 001 00000 100
+	addq A, 1	=>	00010 000 00000001
+	move_r_r R4, A	=>	01010 100 00000 001
+	move_a_r A, (R4)=>	00111 00000000 100
+	move_r_r R5, A	=>	01010 101 00000 001
+	bcc_n A, 0	=>	00101 000 00000000
+	jp_r_f Z, next_m(+12)=> 11000 000 00001100
 
-iterate: move_r_r A, R2		01010 001_00000_010
-	    addq A, 1		00010 00100000001
-	    move_r_r R2, A	01010 01000000001
-	    move_a_r A, (R2)	00111 00100000010
-	    move_r_r R3, A	01010 01100000001
-	    bcc_n A, 0		00101 00100000000
-     jump_r_f z, it_next(+23)   11000 00000010111
-	    move_r_r R4, R2	01010 10000000010
+sub: move_r_r A, R5	=>	01010 001 00000 101
+	sub A, R3	=>	00011 00000000 011
+	move_r_r R5, A	=>	01010 101 00000 001
+	bcc_r A, R3	=>	00110 00000000 011
+	jp_r_f Z, sub(-4)=>	11000 000 11111100
+	jp_r_f C, menor(+2)=>	11001 000 00000010
+	jp_r sub(-6)	=>	10011 000 11111010
 
-multp: move_r_r A, R4		01010 00100000100
-	  addq A, 1		00010 00100000001
-	  move_r_r R4, A	01010 10000000001
-	  move_a_r A, (R4)	00111 00100000100
-	  move_r_r R5, A	01010 10100000001
-	  bcc_n A, 0		00101 00100000000
-      jump_r_f Z, next_m(+12)	11000 00000001100
+menor: bcc_n A, 0	=>	00101 000 00000000
+	jp_r_f Z, zera(+2)=>	11000 000 00000010
+	jp_r next_m(+2)	=>	10011 000 00000010
+	
+zera: move_r_a (R4), A	=>	01000 00000000 100
 
-sub: move_r_r A, R5 		01010 00100000101
-	sub A, R3		00011 00100000011
-	move_r_r R5, A		01010 10100000001
-	bcc_r A, R3		00110 00100000011
-	jump_r_f Z, sub(-4)	11000 00011111100
-	jump_r_f C, menor(+2)	11001 00000000010
-	jump_r sub(-6)		10011 00011111010
+next_m: move_r_r A, R4	=>	01010 001 00000 100
+	bcc_n A, 32	=>	00101 000 00100000
+	jp_r_f C, multp(-20)=>	11001 000 11101100
 
-menor: bcc_n A, 0		00101 00100000000
-	jump_r_f Z, zera(+2)	11000 00000000010
-	jump_r next_m(+2)	10011 00000000010
+it_next: move_r_r A, R2	=>	01010 001 00000 010
+	bcc_n A, 32	=>	00101 000 00100000
+	jp_r_f C, iterate(-31)=>11001 000 11100001
+	move_r_n R2, 1	=>	01001 010 00000001
 
-zera: move_r_a (R4), A		01000 10000000001
-
-next_m: move_r_r A, R4		01010 00100000100
-	  bcc_n A, 32		00101 00100100000
-	jump_r_f C, multp(-20)	11001 00011101100
-
-it_next: move_r_r A, R2		01010 00100000010
-		bcc_n A, 32	00101 00100100000
-     jump_r_f C, iterate(-31)	11001 00011100001
-		move_r_n R2, 1	01001 01000000001
-
-show: move_r_r A, R2		01010 00100000010
-	addq A, 1		00010 00100000001
-	move_r_r R2, A		01010 01000000001
-	move_a_r A, (R2)	01000 00100000010
-	move_r_r R6, A		01010 11000000001
-	move_r_r A, R2		01010 00100000010
-	bcc_n A, 32		00101 00100100000
-   jump_r_f C, show(-7)		11001 00011111001
+show: move_r_r A, R2	=>	01010 001 00000 010
+	addq A, 1	=>	00010 000 00000001
+	move_r_r R2, A	=>	01010 010 00000 001
+	move_a_r A, (R2)=>	00111 00000000	010
+	move_r_r R6, A	=>	01010 110 00000 001
+	move_r_r A, R2	=>	01010 001 00000 010
+	bcc_n A, 32	=>	00101 000 00100000
+	jp_r_f C, show(-7)=>	11001 000 11111001
